@@ -13,7 +13,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class IikoOrderRequest {
 
-    public static final IikoOrderItem CUTLERY = new IikoOrderItem("6698b8ed-f186-46e0-9048-91b55018aa60", "Приборы", "12080", 1, 0);
+    public static final IikoOrderItem CUTLERY = new IikoOrderItem("9fb95ef7-8136-4d59-8822-bbfd702bdef0", "Приборы", "12080", 1, 0);
     public static final String NO_NAME_USER = "Anonymous";
     public static final int IIKO_HOME_MAX_LENGTH = 9;
     public static final String TOO_LONG_HOME = "коммент.";
