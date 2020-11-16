@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ключевые слова</title>
+    <input class="MyButton" type="button" value="Продукты" onclick="window.location.href='/admin/products'" />
+</head>
+<body>
+<table>
+    <thead>
+
+    <h3 th:text="${productName}"></h3>
+    <h3>Ключевые слова продукта</h3>
+
+    </thead>
+    <tbody>
+    <tr th:if="${productKeyWords.isEmpty()}">
+        <td colspan="2"> Ключевых слов нет </td>
+    </tr>
+    <tr th:each="word : ${productKeyWords}">
+        <td><span th:text="${word}"> Слово </span></td>
+        <td>
+            <form action="#" th:action="@{'/admin/products/{id}/words/delete'(id=${productId})}" method="post">
+                <input type="hidden" name="wordToDelete" th:value="${word}" />
+                <button type="submit" id="submitButton"> Удалить </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<table>
+    <thead>
+
+    <h3>Все ключевые слова</h3>
+
+    </thead>
+    <tbody>
+    <tr th:if="${allKeyWords.isEmpty()}">
+        <td colspan="2"> Ключевых слов нет </td>
+    </tr>
+    <tr th:each="word : ${allKeyWords}">
+        <td><span th:text="${word.word}"> Слово </span></td>
+        <td>
+            <form action="#" th:action="@{'/admin/products/{id}/words'(id=${productId})}" method="post">
+                <input type="hidden" name="wordToAdd" th:value="${word.word}" />
+                <button type="submit"> Добавить </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <input class="MyButton" type="button" value="Меню" onclick="window.location.href='/'" />
+    <title>Адреса</title>
+</head>
+
+<br>
+<h3>Загрузить справочник адресов</h3>
+<form th:action="@{/admin/addresses/upload}" method="post" enctype="multipart/form-data">
+    <input type="file" th:name="file">
+    <input th:type="submit" value="Загрузить" />
+</form>
+
+<br>
+<h3>Загрузить координаты</h3>
+<form th:action="@{/admin/addresses/coordinates/upload}" method="post" enctype="multipart/form-data">
+    <input type="file" th:name="file">
+    <input th:type="submit" value="Загрузить" />
+</form>
+
+<br>
+<input class="MyButton" type="button" value="Показать список адресов" onclick="window.location.href='/admin/addresses/list/page/1'" />
+
+<script th:if="${message}" th:inline="javascript">
+    var message = /*[[${message}]]*/
+        alert(message);
+</script>
+</body>
+</html>

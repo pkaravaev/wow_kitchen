@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Список адресов</title>
+    <input class="MyButton" type="button" value="Управление адресами" onclick="window.location.href='/admin/addresses'" />
+    <h3>Список адресов</h3>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:3px 15px 3px 15px;
+        }
+
+        ul.hr {
+            margin: 0; /* Обнуляем значение отступов */
+            padding: 4px; /* Значение полей */
+        }
+        ul.hr li {
+            display: inline; /* Отображать как строчный элемент */
+            margin-right: 5px; /* Отступ слева */
+        }
+
+        a {
+            text-decoration: none; /* Убираем подчеркивание для ссылок */
+        }
+    </style>
+</head>
+
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <th> Улица </th>
+        <th> Дом </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${addresses.isEmpty()}">
+        <td colspan="2"> Адресов нет </td>
+    </tr>
+    <tr th:each="address : ${addresses}">
+        <td><span th:text="${address.getStreet()}"> STREET </span></td>
+        <td><span th:text="${address.getHouse()}"> HOME </span></td>
+    </tr>
+    </tbody>
+</table>
+
+<br/>
+
+<div class="row" th:fragment="pagination">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <nav aria-label="Pagination">
+            <ul class="hr">
+                <li class="page-item" th:each="pageNumber : ${pageNumbers}" >
+                    <a class="page-link" th:style="${pageNumber.equals(currentPage)} ? 'color:green;font-weight:600': 'color:black'" th:href="@{|/admin/addresses/list/page/${pageNumber}|}" th:text=${pageNumber}>1</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

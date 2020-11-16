@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Продукты</title>
+    <input class="MyButton" type="button" value="Меню" onclick="window.location.href='/'" />
+    <h3>Продукты</h3>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+    </style>
+</head>
+
+<body>
+<br>
+<input class="MyButton" type="button" value="Показать выгруженное в iiko меню" onclick="window.location.href='/admin/products/iiko'" />
+<br>
+<br>
+<input class="MyButton" type="button" value="Выгрузить меню из iiko" onclick="window.location.href='/admin/products/nomenclature'" />
+<br>
+<br>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th> НАЗВАНИЕ </th>
+        <th> КАТЕГОРИЯ </th>
+        <th> ОПИСАНИЕ </th>
+        <th> ЦЕНА </th>
+        <th> ВКЛЮЧЕНО <br/> В МЕНЮ </th>
+        <th> В СТОП <br/> ЛИСТЕ </th>
+        <th> </th>
+        <th> </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${products.isEmpty()}">
+        <td colspan="2"> Продуктов нет </td>
+    </tr>
+    <tr th:each="product : ${products}">
+        <td><span th:text="${product.getName()}"> NAME </span></td>
+        <td><span th:text="${product.getProductCategoryName()}"> CATEGORY NAME </span></td>
+        <td><span th:text="${product.getDescription()}"> DESCRIPTION </span></td>
+        <td><span th:text="${product.getPrice()}"> PRICE </span></td>
+        <td><input th:type="checkbox" onclick="return false" th:checked="${product.isIncludedInMenu()}">  </td>
+        <td><input th:type="checkbox" onclick="return false" th:checked="${product.isInStopList()}">  </td>
+        <td><input class="MyButton" type="button" value="Предпочтения" th:onclick="'window.location.href = \'' + @{/admin/products/{id}/preferences(id=${product.getId()})} + '\''" /></td>
+        <td><input class="MyButton" type="button" value="Ключевые слова" th:onclick="'window.location.href = \'' + @{/admin/products/{id}/words(id=${product.getId()})} + '\''" /></td>
+    </tr>
+    </tbody>
+</table>
+
+<script th:if="${message}" th:inline="javascript">
+    var message = /*[[${message}]]*/
+        alert(message);
+</script>
+
+</body>
+</html>

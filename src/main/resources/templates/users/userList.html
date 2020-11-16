@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Пользователи</title>
+    <input class="MyButton" type="button" value="Меню" onclick="window.location.href='/'" />
+    <h3>Пользователи</h3>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+    </style>
+</head>
+
+<body>
+<table>
+    <thead>
+    <tr>
+        <th > ID </th>
+        <th> ТЕЛЕФОН </th>
+        <th> ИМЯ </th>
+        <th> БОНУСНЫЙ <br/> СЧЕТ </th>
+        <th> ПРОМОКОД <br/> ИСПОЛЬЗОВАН </th>
+        <th> БОНУСОВ <br/> ИСПОЛЬЗОВАНО </th>
+        <th> ПРОМОКОД </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${users.isEmpty()}">
+        <td colspan="2"> Пользователей нет </td>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td><span th:text="${user.getId()}"> ID </span></td>
+        <td><span th:text="${user}"> MOBILE </span></td>
+        <td><span th:text="${user.getName()}"> NAME </span></td>
+        <td><span th:text="${user.getBonusAccount().getBonusAmount()}"> BONUSES </span></td>
+        <td><input th:type="checkbox" onclick="return false" th:checked="${user.getBonusAccount().isRegistrationPromoCodeUsed()}">  </td>
+        <td><span th:text="${user.getBonusAccount().getBonusesSpent()}"> BONUSES SPENT </span></td>
+        <td><span th:text="${user.getBonusAccount().getRegistrationPromoCode()}"> PROMO CODE </span></td>
+        <td><input class="MyButton" type="button" value="Адреса" th:onclick="'window.location.href = \'' + @{/admin/users/{userId}/addresses(userId=${user.getId()})} + '\''" /></td>
+        <td><input class="MyButton" type="button" value="Банк. карты" th:onclick="'window.location.href = \'' + @{/admin/users/{userId}/cards(userId=${user.getId()})} + '\''" /></td>
+        <td><input class="MyButton" type="button" value="Предпочтения" th:onclick="'window.location.href = \'' + @{/admin/users/{userId}/preferences(userId=${user.getId()})} + '\''" /></td>
+        <td><input class="MyButton" type="button" value="Изменить бонусный счет" th:onclick="'window.location.href = \'' + @{/admin/users/{userId}/bonuses(userId=${user.getId()})} + '\''" /></td>
+    </tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Позиции заказа</title>
+<!--    <input class="MyButton" type="button" value="Заказы" onclick="window.location.href='/admin/orders/page/1'" />-->
+    <input class="MyButton" type="button" value="Заказы" th:onclick="'window.location.href = \'' + @{/admin/orders/page/{page}(page=${currentPage})} + '\''" />
+
+    <h3>Позиции</h3>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+    </style>
+</head>
+
+<body>
+<table>
+    <thead>
+    <tr>
+        <th> ID </th>
+        <th> НАЗВАНИЕ </th>
+        <th> ЦЕНА </th>
+        <th> КОЛИЧЕСТВО </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${items.isEmpty()}">
+        <td colspan="2"> No Items </td>
+    </tr>
+    <tr th:each="item : ${items}">
+        <td><span th:text="${item.getProduct().getId()}"> ID </span></td>
+        <td><span th:text="${item.getProduct().getName()}"> NAME </span></td>
+        <td><span th:text="${item.getProduct().getPrice()}"> PRICE </span></td>
+        <td><span th:text="${item.getAmount()}"> AMOUNT </span></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

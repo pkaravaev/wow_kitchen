@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Бонусы</title>
+    <input class="MyButton" type="button" value="Пользователи" onclick="window.location.href='/admin/users'" />
+    <h3>Бонусы</h3>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+    </style>
+</head>
+
+<body>
+<form th:action="@{/admin/users/{userId}/bonuses(userId=${userId})}"  method="post">
+    Количество бонусов
+    <input type="number" th:value="${bonusAmount}" th:max="10000" th:min="0" name="newValue"/>
+    <input type="submit" value="Изменить"/>
+</form>
+
+<script th:if="${message}" th:inline="javascript">
+    var message = /*[[${message}]]*/
+    alert(message);
+</script>
+</body>
+</html>

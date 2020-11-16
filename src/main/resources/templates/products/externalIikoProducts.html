@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Продукты iiko</title>
+    <input class="MyButton" type="button" value="Продукты" onclick="window.location.href='/admin/products'" />
+    <h3>Список продуктов, выгруженных во внешнюю систему iiko</h3>
+
+    <style>
+        .category-table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:3px 15px 3px 15px;
+        }
+
+        ul.hr {
+            margin: 0; /* Обнуляем значение отступов */
+            padding: 4px; /* Значение полей */
+        }
+        ul.hr li {
+            display: inline; /* Отображать как строчный элемент */
+            margin-right: 5px; /* Отступ слева */
+        }
+
+        a {
+            text-decoration: none; /* Убираем подчеркивание для ссылок */
+        }
+
+        .product-table {border: none}
+        .product-table .product-td {border:1px solid #EEE;}
+    </style>
+</head>
+
+<body>
+<table class="category-table">
+    <thead>
+    <tr>
+        <th> Название </th>
+        <th> Продукты </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${categories.isEmpty()}">
+        <td colspan="2"> Категорий нет </td>
+    </tr>
+    <tr th:each="category : ${categories}">
+        <td><span th:text="${category.getName()}"> NAME </span></td>
+        <td>
+            <table class="product-table">
+                <tr th:each="product : ${category.getProducts()}">
+                    <td class="product-td"><span th:text="${product}"> NAME </span></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<br/>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Банк. карты</title>
+    <input class="MyButton" type="button" value="Пользователи" onclick="window.location.href='/admin/users'" />
+    <h3>Банковские карты пользователя</h3>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+    </style>
+</head>
+
+<body>
+<table>
+    <thead>
+    <tr>
+        <th> Актуальная </th>
+        <th> Номер </th>
+        <th> Тип </th>
+        <th> Банк-эмитент </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${cards.isEmpty()}">
+        <td colspan="2"> Карт нет </td>
+    </tr>
+    <tr th:each="card : ${cards}">
+        <td><input th:type="checkbox" onclick="return false" th:checked="${card.isActual()}"> </td>
+        <td><span th:text="${card.cardMask}"> Номер </span></td>
+        <td><span th:text="${card.cardType}"> Тип </span></td>
+        <td><span th:text="${card.cardIssuer}"> Банк-эмитент </span></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

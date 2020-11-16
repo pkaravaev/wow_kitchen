@@ -1,0 +1,1 @@
+delete from tb_product_category where id notnull;

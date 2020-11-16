@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://widget.cloudpayments.kz/bundles/checkout"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+</head>
+<body>
+<form id="paymentFormSample" autocomplete="off" onsubmit="createCryptogram()">
+    <input type="text" data-cp="cardNumber">
+    <input type="text" data-cp="expDateMonth">
+    <input type="text" data-cp="expDateYear">
+    <input type="text" data-cp="cvv">
+    <button type="submit">Оплатить 100 р.</button>
+</form>
+<script>
+    this.createCryptogram = function () {
+        var result = checkout.createCryptogramPacket();
+
+        if (result.success) {
+            // сформирована криптограмма
+            alert(result.packet);
+        } else {
+            // найдены ошибки в ведённых данных, объект `result.messages` формата:
+            // { name: "В имени держателя карты слишком много символов", cardNumber: "Неправильный номер карты" }
+            // где `name`, `cardNumber` соответствуют значениям атрибутов `<input ... data-cp="cardNumber">`
+            for (var msgName in result.messages) {
+                alert(result.messages[msgName]);
+            }
+        }
+    };
+
+    $(function () {
+        /* Создание checkout */
+        checkout = new cp.Checkout(
+            // public id из личного кабинета
+            "pk_403af1ce89784ad1f80225c46f355",
+            // тег, содержащий поля данными карты
+            document.getElementById("paymentFormSample"));
+    });
+</script>
+</body>
+</html>

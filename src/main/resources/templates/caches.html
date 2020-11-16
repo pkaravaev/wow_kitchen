@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Кэши</title>
+</head>
+<body>
+
+<br/>
+<form>
+    <input class="MyButton" type="button" value="Очистить кэш залогиненного юзера" onclick="window.location.href='/admin/caches/loggedUser'" />
+    <input class="MyButton" type="button" value="Очистить кэш продуктов для моб. приложений" onclick="window.location.href='/admin/caches/productsForFrontApp'" />
+    <input class="MyButton" type="button" value="Очистить кэш зон доставки" onclick="window.location.href='/admin/caches/deliveryZone'" />
+    <input class="MyButton" type="button" value="Очистить кэш справочника адресов" onclick="window.location.href='/admin/caches/addresses'" />
+</form>
+
+<script th:if="${message}" th:inline="javascript">
+    var message = /*[[${message}]]*/
+        alert(message);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Настройки</title>
+    <input class="MyButton" type="button" value="Меню" onclick="window.location.href='/'" />
+    <h3>Настройки приложения</h3>
+    <br>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:each="property : ${properties}">
+    <form action="#" th:action="@{'/admin/properties'}" th:object="${property}" method="post">
+        <span th:text="${property.getDescription()}"> DESCRIPTION </span><br>
+        <input type="hidden" th:value="*{id}" id="id" name="id"/>
+        <input type="text" th:value="*{value}" id="value" name="value"/>
+        <button type="submit" id="submitButton"> Сохранить </button>
+    </form>
+    <br>
+</div>
+
+<script th:if="${message}" th:inline="javascript">
+    var message = /*[[${message}]]*/
+        alert(message);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Заказы</title>
+    <input class="MyButton" type="button" value="Меню" onclick="window.location.href='/'" />
+    <h3>Заказы</h3>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+
+        ul.hr {
+            margin: 0; /* Обнуляем значение отступов */
+            padding: 4px; /* Значение полей */
+        }
+        ul.hr li {
+            display: inline; /* Отображать как строчный элемент */
+            margin-right: 5px; /* Отступ слева */
+        }
+
+        a {
+            text-decoration: none; /* Убираем подчеркивание для ссылок */
+        }
+    </style>
+</head>
+
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <th> ID </th>
+        <th> IIKO ID </th>
+        <th> ПОЛЬЗОВАТЕЛЬ </th>
+        <th> ИТОГО </th>
+        <th> БОНУСЫ </th>
+        <th> ОБЩАЯ <br/> СУММА </th>
+        <th> СТАТУС <br/> ЗАКАЗА </th>
+        <th> СОЗДАН </th>
+        <th> СТАТУС <br/> ОПЛАТЫ </th>
+        <th> </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${orders.isEmpty()}">
+        <td colspan="2"> Заказов нет </td>
+    </tr>
+    <tr th:each="order : ${orders}">
+        <td><span th:text="${order.getId()}"> ID </span></td>
+        <td><span th:text="${order.getIikoShortId()}"> IIKO ID </span></td>
+        <td><span th:text="${order.getUser()}"> USER </span></td>
+        <td><span th:text="${order.getTotalCost()}"> TOTAL </span></td>
+        <td><span th:text="${order.getAppliedBonusAmount()}"> BONUS </span></td>
+        <td><span th:text="${order.getProductsCost()}"> COST </span></td>
+        <td><span th:text="${order.getStatus()}"> ORDER STATUS </span></td>
+        <td><span th:text="${#temporals.format(order.getCreated(), 'dd-MM-yyyy HH:mm')}"> CREATED </span></td>
+        <td><span th:text="${order.getCloudPayment()?.getCloudPaymentStatus()}"> PAYMENT STATUS </span></td>
+        <td><input class="MyButton" type="button" value="Позиции" th:onclick="'window.location.href = \'' + @{/admin/orders/page/{page}/{orderId}/items(page=${currentPage}, orderId=${order.getId()})} + '\''" /></td>
+    </tr>
+    </tbody>
+</table>
+
+<br/>
+
+<div class="row" th:fragment="pagination">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <nav aria-label="Pagination">
+            <ul class="hr">
+                <li class="page-item" th:each="pageNumber : ${pageNumbers}" >
+                    <a class="page-link" th:style="${pageNumber.equals(currentPage)} ? 'color:green;font-weight:600': 'color:black'" th:href="@{|/admin/orders/page/${pageNumber}|}" th:text=${pageNumber}>1</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Промо-коды</title>
+    <input class="MyButton" type="button" value="Меню" onclick="window.location.href='/'" />
+
+    <style>
+        input, label {
+            display:block;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+
+        ul.hr {
+            margin: 0; /* Обнуляем значение отступов */
+            padding: 4px; /* Значение полей */
+        }
+        ul.hr li {
+            display: inline; /* Отображать как строчный элемент */
+            margin-right: 5px; /* Отступ слева */
+        }
+
+        a {
+            text-decoration: none; /* Убираем подчеркивание для ссылок */
+        }
+    </style>
+</head>
+
+<body>
+<br>
+<h3>Добавить новый неперсональный промо-код</h3>
+
+<form action="#" th:action="@{/admin/bonuses/promoCode}" th:object="${newPromoCode}" method="post">
+    <label for="promoCode">Название</label>
+    <input id="promoCode" type="text" th:minlength="5" th:maxlength="10" th:required="true" th:field="*{promoCode}"/>
+    <br>
+    <label for="amount">Значение</label>
+    <input id="amount" type="number" th:max="10000" th:min="1" th:required="true" th:field="*{amount}" th:value="0"/>
+
+    <p><input type="submit" value="Добавить" /></p>
+</form>
+
+<br>
+<h3>Неперсональные промо-коды</h3>
+<table border="1">
+    <thead>
+    <tr>
+        <th> КОД </th>
+        <th> ЗНАЧЕНИЕ </th>
+        <th> </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${promoCodes.isEmpty()}">
+        <td colspan="2"> Промо-кодов нет </td>
+    </tr>
+    <tr th:each="code : ${promoCodes}">
+        <td><span th:text="${code.getPromoCode()}"> CODE </span></td>
+        <td><span th:text="${code.getAmount()}"> AMOUNT </span></td>
+        <td>
+            <form action="#" th:action="@{'/admin/bonuses/promoCodes/delete/{id}'(id=${code.getId()})}" method="post">
+                <input type="hidden" name="_method" value="delete" />
+                <button type="submit" id="submitButton"> Удалить </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script th:if="${message}" th:inline="javascript">
+    var message = /*[[${message}]]*/
+        alert(message);
+</script>
+
+</body>
+</html>

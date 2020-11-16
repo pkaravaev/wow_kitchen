@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Предпочтения</title>
+    <input class="MyButton" type="button" value="Пользователи" onclick="window.location.href='/admin/users'" />
+    <h3>Предпочтения пользователя</h3>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+    </style>
+</head>
+
+<body>
+<table>
+    <thead>
+    <tr>
+        <th> Вегетарианец </th>
+        <th> Не ест острое </th>
+        <th> Не ест орехи </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><input th:type="checkbox" onclick="return false" th:checked="${preferences.vegetarian}"> </td>
+        <td><input th:type="checkbox" onclick="return false" th:checked="${preferences.notSpicy}"> </td>
+        <td><input th:type="checkbox" onclick="return false" th:checked="${preferences.withoutNuts}"> </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Не ест продукты:</h3>
+<ul>
+    <th:block th:if="${preferences.dontLike.isEmpty()}">Нет</th:block>
+    <th:block th:object="${preferences}">
+        <li th:each="word : *{dontLike}" th:text="${word}"> Ключевое слово </li>
+    </th:block>
+</ul>
+</body>
+</html>

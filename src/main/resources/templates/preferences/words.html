@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Ключевые слова</title>
+    <input class="MyButton" type="button" value="Меню" onclick="window.location.href='/'" />
+    <h3>Ключевые слова предпочтений пользователей</h3>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+    </style>
+</head>
+
+<body>
+<table>
+    <thead>
+
+    </thead>
+    <tbody>
+    <tr th:if="${words.isEmpty()}">
+        <td colspan="2"> Ключевых слов нет </td>
+    </tr>
+    <tr th:each="word : ${words}">
+        <td><span th:text="${word.word}"> Слово </span></td>
+        <td>
+            <form action="#" th:action="@{'/admin/users/preferences/words/{id}'(id=${word.id})}" method="post">
+                <input type="hidden" name="_method" value="delete" />
+                <button type="submit" id="submitButton"> Удалить </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<form action="#" th:action="@{/admin/preferences/words}" th:object="${newWord}" method="post">
+    <p>Новое слово: <input type="text" th:field="*{word}" /></p>
+    <p><input type="submit" value="Добавить" /></p>
+</form>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Адреса</title>
+    <input class="MyButton" type="button" value="Пользователи" onclick="window.location.href='/admin/users'" />
+    <h3>Адреса пользователя</h3>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        td {
+            padding:1px 15px 1px 15px;
+        }
+    </style>
+</head>
+
+<body>
+<table>
+    <thead>
+    <tr>
+        <th> Актуальный </th>
+        <th> Город </th>
+        <th> Улица </th>
+        <th> Дом </th>
+        <th> Корпус </th>
+        <th> Подъезд </th>
+        <th> Квартира </th>
+        <th> Этаж </th>
+        <th> Домофон </th>
+        <th> Комментарий </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${addresses.isEmpty()}">
+        <td colspan="2"> Адресов нет </td>
+    </tr>
+    <tr th:each="address : ${addresses}">
+        <td><input th:type="checkbox" onclick="return false" th:checked="${address.getActual()}"> </td>
+        <td><span th:text="${address.getCity()}"> Город </span></td>
+        <td><span th:text="${address.getStreet()}"> Улица </span></td>
+        <td><span th:text="${address.getHome()}"> Дом </span></td>
+        <td><span th:text="${address.getHousing()}"> Корпус </span></td>
+        <td><span th:text="${address.getEntrance()}"> Подъезд </span></td>
+        <td><span th:text="${address.getApartment()}"> Квартира </span></td>
+        <td><span th:text="${address.getFloor()}"> Этаж </span></td>
+        <td><span th:text="${address.getDoorphone()}"> Домофон </span></td>
+        <td><span th:text="${address.getComment()}"> Комментарий </span></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

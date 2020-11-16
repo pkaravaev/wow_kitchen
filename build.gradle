@@ -1,0 +1,150 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath('org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE')
+        classpath('gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0')
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.1.5.RELEASE'
+    id 'java'
+    id 'war'
+    id 'idea'
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+
+war{
+    enabled = true
+    archiveFileName = 'ROOT.war'
+}
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'war'
+apply plugin: 'com.palantir.docker'
+
+group = 'gekovin'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+bootJar {
+    archiveFileName = 'spring-boot-gradle-docker'
+    version =  '0.1.0'
+}
+
+task unpack(type: Copy) {
+    dependsOn bootJar
+    from(zipTree(tasks.bootJar.outputs.files.singleFile))
+    into("build/dependency")
+}
+
+docker {
+    name "${project.group}/projectx"
+    copySpec.from(tasks.unpack.outputs).into("dependency")
+    buildArgs(['DEPENDENCY': "dependency"])
+}
+
+springBoot {
+    mainClassName = 'com.foodtech.back.Application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    /**
+     * Spring
+     */
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.1.6.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.1.7.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-messaging', version: '5.1.6.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-amqp', version: '2.1.8.RELEASE'
+    compile group: 'com.h2database', name: 'h2', version: '1.4.199'
+
+    /**
+     * Database
+     */
+    runtimeOnly 'org.postgresql:postgresql'
+
+    /**
+     * JWT
+     */
+    compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+
+    /**
+     * Crypto
+     */
+    compile group: 'org.jasypt', name: 'jasypt', version: '1.9.3'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.62'
+
+    /**
+     *Xml parsing
+    */
+    compile group: 'org.apache.poi', name: 'poi', version: '4.1.0'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.0'
+
+
+    /**
+     * Utils
+     */
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.9'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.12'
+    compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.5'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.9'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'com.google.firebase:firebase-admin:6.8.1'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+
+
+    /**
+     * Test
+     */
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.199'
+
+//    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+//    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+//    implementation 'org.springframework.boot:spring-boot-starter-integration'
+//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+//    implementation 'org.springframework.session:spring-session-core'
+    //
+}

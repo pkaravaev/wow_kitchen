@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Предпочтения</title>
+    <input class="MyButton" type="button" value="Продукты" onclick="window.location.href='/admin/products'" />
+</head>
+<body>
+
+<h3 th:text="${productPreferences.productName}"></h3>
+
+<form action="#" th:action="@{/admin/products/preferences}" th:object="${productPreferences}" method="post">
+    <input th:type="hidden" th:field="${productPreferences.productId}"/>
+    <input th:type="hidden" th:field="${productPreferences.productName}"/>
+
+    <input id="vegetarian" type="checkbox" th:field="*{vegetarian}" th:value="*{vegetarian}"/>
+    <label for="vegetarian">Вегетарианское</label>
+
+    <input id="spicy" type="checkbox" th:field="*{spicy}" th:value="*{spicy}"/>
+    <label for="spicy">Острое</label>
+
+    <input id="withNuts" type="checkbox" th:field="*{withNuts}" th:value="*{withNuts}"/>
+    <label for="withNuts">С орехами</label>
+
+    <p><input type="submit" value="Сохранить" /></p>
+</form>
+
+<script th:if="${message}" th:inline="javascript">
+    var message = /*[[${message}]]*/
+    alert(message);
+</script>
+
+</body>
+</html>
