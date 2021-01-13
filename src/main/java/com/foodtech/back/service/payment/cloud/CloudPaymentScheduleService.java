@@ -49,12 +49,12 @@ public class CloudPaymentScheduleService {
                 .map(PaymentConfirmTask::new)
                 .collect(Collectors.toList());
 
-        List<Runnable> toCancel = cancelIds
-                .stream()
-                .map(PaymentCancelTask::new)
-                .collect(Collectors.toList());
+//        List<Runnable> toCancel = cancelIds
+//                .stream()
+//                .map(PaymentCancelTask::new)
+//                .collect(Collectors.toList());
 
-        toConfirm.addAll(toCancel);
+//        toConfirm.addAll(toCancel);
         return toConfirm;
     }
 

@@ -144,11 +144,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processPaid(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(ON_SENDING);
         order.setCheckStatus(false); // пока заказ не отправится в айку убираем его с проверки статуса, чтобы избежать ситуации с повторной отправкой одного заказа
+        orderRepository.save(order);
     }
 
     @Override
@@ -160,6 +160,7 @@ public class OrderServiceImpl implements OrderService {
         order.setIikoShortId(sendingResult.getOrderInfo().getNumber());
         order.setIikoProblem(sendingResult.getProblem());
         order.setCheckStatus(true);
+        orderRepository.save(order);
     }
 
     @Override
@@ -171,30 +172,35 @@ public class OrderServiceImpl implements OrderService {
         order.setInProcessing(false);
         order.setCheckStatus(false);
         order.getCloudPayment().setPaymentCompleteRequired(true);
+        orderRepository.save(order);
     }
 
     @Override
     public void processInProgress(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(IN_PROGRESS);
+        orderRepository.save(order);
     }
 
     @Override
     public void processReady(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(READY);
+        orderRepository.save(order);
     }
 
     @Override
     public void processAwaitingDelivery(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(AWAITING_DELIVERY);
+        orderRepository.save(order);
     }
 
     @Override
     public void processOnTheWay(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(ON_THE_WAY);
+        orderRepository.save(order);
     }
 
     @Override
@@ -203,6 +209,7 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(DELIVERED);
         order.setInProcessing(false);
         order.getCloudPayment().setPaymentCompleteRequired(true);
+        orderRepository.save(order);
     }
 
     @Override
@@ -212,31 +219,35 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(CLOSED);
         order.setCheckStatus(false);
         order.setInProcessing(false);
+        orderRepository.save(order);
     }
 
     @Override
     public void processCancelled(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow();
-        order.setStatus(CANCELLED);
-        order.setCheckStatus(false);
-        order.setInProcessing(false);
-        order.getCloudPayment().setPaymentCompleteRequired(true);
+//        Order order = orderRepository.findById(orderId).orElseThrow();
+//        order.setStatus(CANCELLED);
+//        order.setCheckStatus(false);
+//        order.setInProcessing(false);
+//        order.getCloudPayment().setPaymentCompleteRequired(true);
+//        orderRepository.save(order);
     }
 
     @Override
     public void processNotConfirmed(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow();
-        order.setStatus(CANCELLED);
-        order.setCheckStatus(false);
-        order.setInProcessing(false);
-        order.getCloudPayment().setPaymentCompleteRequired(true);
+//        Order order = orderRepository.findById(orderId).orElseThrow();
+//        order.setStatus(CANCELLED);
+//        order.setCheckStatus(false);
+//        order.setInProcessing(false);
+//        order.getCloudPayment().setPaymentCompleteRequired(true);
+//        orderRepository.save(order);
     }
 
     @Override
     public void processNotProcessed(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow();
-        log.info("Order wasn't processed by iiko. Order: '{}'. User: '{}'", order.getId(), order.getUser());
-        order.setCheckStatus(false);
-        order.setInProcessing(false);
+//        Order order = orderRepository.findById(orderId).orElseThrow();
+//        log.info("Order wasn't processed by iiko. Order: '{}'. User: '{}'", order.getId(), order.getUser());
+//        order.setCheckStatus(false);
+//        order.setInProcessing(false);
+//        orderRepository.save(order);
     }
 }

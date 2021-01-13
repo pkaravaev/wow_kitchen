@@ -4,24 +4,32 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.foodtech.back.dto.iiko.IikoOrderRequest;
+import com.foodtech.back.entity.auth.Admin;
+import com.foodtech.back.entity.auth.Role;
 import com.foodtech.back.entity.model.*;
 import com.foodtech.back.entity.model.iiko.DeliveryCoordinate;
 import com.foodtech.back.entity.model.iiko.DeliveryZone;
 import com.foodtech.back.entity.model.iiko.Product;
+import com.foodtech.back.repository.auth.AdminRepository;
 import com.foodtech.back.repository.model.AddressDirectoryRepository;
+import com.foodtech.back.security.AdminDetailsService;
 import com.foodtech.back.service.iiko.IikoOrderStatusCheckExecutor;
 import com.foodtech.back.service.model.AddressDirectoryService;
 import com.foodtech.back.service.model.DeliveryZoneService;
+import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @SpringJUnitWebConfig
 @SpringBootTest
@@ -35,7 +43,6 @@ import java.util.Optional;
         "classpath:payment.properties",
         "classpath:client_messages.properties",
         "classpath:rabbitmq.properties",
-
         "classpath:payment-dev.properties"
 })
 @Disabled
@@ -53,10 +60,24 @@ class ManualCodeExecution {
     @Autowired
     IikoOrderStatusCheckExecutor statusCheckExecutor;
 
+    @Autowired
+    private AdminRepository adminRepository;
+
     @Test
     @Disabled
     void saveDeliveryZones() {
         deliveryZoneService.saveDeliveryZones();
+    }
+
+    @Test
+    public void addAdmin() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        Admin admin = new Admin();
+        admin.setName("Rizvan");
+        admin.setCreated(LocalDateTime.now());
+        admin.setRoles(Set.of(Role.ROLE_ADMIN));
+        admin.setPassword(encoder.encode("rizvan787"));
+        adminRepository.save(admin);
     }
 
     @Test

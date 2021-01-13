@@ -11,12 +11,12 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,7 +24,9 @@ import java.util.Optional;
 @Slf4j
 public class FirebasePushSender {
 
-    private static final String SERVICE_ACCOUNT_KEY_PATH = "firebase/serviceAccountKey.json";
+    private final ResourceLoader resourceLoader;
+
+    private static final String SERVICE_ACCOUNT_KEY_PATH = "serviceAccountKey.json";
 
     private FirebaseMessaging firebaseMessaging;
 
@@ -32,25 +34,28 @@ public class FirebasePushSender {
 
     private final ResourcesProperties properties;
 
-    public FirebasePushSender(FirebaseTokenRepository firebaseTokenRepository, ResourcesProperties properties) {
+    public FirebasePushSender(FirebaseTokenRepository firebaseTokenRepository, ResourcesProperties properties, ResourceLoader resourceLoader) {
         this.firebaseTokenRepository = firebaseTokenRepository;
         this.properties = properties;
+        this.resourceLoader = resourceLoader;
     }
 
     @PostConstruct
     public void init(){
 
         try {
+            Resource resource = resourceLoader.getResource("classpath:serviceAccountKey.json");
             ClassLoader classLoader = getClass().getClassLoader();
-            URL resource = classLoader.getResource(SERVICE_ACCOUNT_KEY_PATH);
+           // URL resource = classLoader.getResource(SERVICE_ACCOUNT_KEY_PATH);
             if (Objects.isNull(resource)) {
                 throw new IllegalArgumentException("Can't obtain firebase service account key resource");
             }
-            File file = new File(resource.toURI());
-            FileInputStream input = new FileInputStream(file);
-
+           // File file = new File(resource.toURI());
+           // FileInputStream input = new FileInputStream(file);
+            InputStream file = resource.getInputStream();
+            GoogleCredentials googleCredentials = GoogleCredentials.fromStream(file);
             FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(input)).build();
+                    .setCredentials(googleCredentials).build();
             FirebaseApp firebaseApp = FirebaseApp.initializeApp(options);
             firebaseMessaging = FirebaseMessaging.getInstance(firebaseApp);
 

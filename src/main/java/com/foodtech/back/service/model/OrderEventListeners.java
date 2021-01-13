@@ -65,7 +65,7 @@ public class OrderEventListeners {
 
     @EventListener
     public void orderCancelled(OrderCancelledEvent event) {
-        orderService.processCancelled(event.getOrder().getId());
+       // orderService.processCancelled(event.getOrder().getId());
     }
 
     @EventListener

@@ -57,7 +57,8 @@ public class IikoRequestService {
             publisher.publishEvent(new OrderSendingFailedEvent(order, failed()));
             return;
         }
-
+        order.setIikoOrderId(createdOrderInfo.getOrderId());
+        orderRepository.save(order);
         publisher.publishEvent(new OrderSentEvent(order, success(createdOrderInfo)));
     }
 

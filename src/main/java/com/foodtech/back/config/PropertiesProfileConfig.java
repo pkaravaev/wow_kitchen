@@ -23,7 +23,6 @@ public class PropertiesProfileConfig {
             "classpath:payment.properties",
             "classpath:client_messages.properties",
             "classpath:rabbitmq.properties",
-
             "classpath:payment-prod.properties"
             }, encoding = "UTF-8")
     static class ProductionPropertiesConfig {
@@ -44,7 +43,6 @@ public class PropertiesProfileConfig {
             "classpath:payment.properties",
             "classpath:client_messages.properties",
             "classpath:rabbitmq.properties",
-
             "classpath:payment-dev.properties"
     }, encoding = "UTF-8")
     static class DevelopPropertiesConfig {

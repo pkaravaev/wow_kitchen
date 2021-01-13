@@ -33,7 +33,7 @@ public class BonusController {
                                        @AuthenticationPrincipal JwtUser jwtUser) {
 
         log.info("Applying promo code '{}' for user '{}'", promoCode, jwtUser);
-        Integer appliedBonusAmount = bonusService.applyPromoCode(promoCode, jwtUser.getId());
+        Integer appliedBonusAmount = bonusService.applyPromoCode(promoCode.toUpperCase(), jwtUser.getId());
         return okResponse(appliedBonusAmount);
     }
 
