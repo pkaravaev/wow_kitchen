@@ -1,12 +1,10 @@
 package com.foodtech.back.service.model;
 
+import com.foodtech.back.bot.WowKitchenBot;
 import com.foodtech.back.config.ResourcesProperties;
 import com.foodtech.back.dto.iiko.IikoOrderSendingResult;
 import com.foodtech.back.dto.model.OrderRegistrationDto;
-import com.foodtech.back.entity.model.Order;
-import com.foodtech.back.entity.model.OrderItem;
-import com.foodtech.back.entity.model.OrderStatus;
-import com.foodtech.back.entity.model.User;
+import com.foodtech.back.entity.model.*;
 import com.foodtech.back.entity.model.iiko.Product;
 import com.foodtech.back.repository.model.OrderItemRepository;
 import com.foodtech.back.repository.model.OrderRepository;
@@ -16,8 +14,10 @@ import com.foodtech.back.service.notification.ampq.RabbitMqService;
 import com.foodtech.back.util.exceptions.CartInvalidException;
 import com.foodtech.back.util.mapper.OrderMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +32,9 @@ import static com.foodtech.back.entity.model.OrderStatus.*;
 @Slf4j
 @Transactional
 public class OrderServiceImpl implements OrderService {
+
+    @Autowired
+    private WowKitchenBot wowKitchenBot;
 
     private final OrderRepository orderRepository;
 
@@ -117,7 +120,6 @@ public class OrderServiceImpl implements OrderService {
         if (costWithBonuses != orderDto.getTotalCost()) {
             throw new CartInvalidException("Cart total cost invalid");
         }
-
         return formOrderAndSave(user, productsQuantity, costWithBonuses, costWithoutBonuses, orderDto.isCutlery());
     }
 
@@ -140,7 +142,34 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setStatusQueueName(rabbitMqService.createQueue(RabbitMqQueueType.ORDER_STATUS_QUEUE, String.valueOf(orderId)));
         newOrder.setDeliveryTime(resourcesProperties.getDefaultDeliveryTime());
         newOrder.setItems(OrderMapper.toOrderItems(newOrder, productsQuantity));
-        return orderRepository.save(newOrder);
+        Order savedOrder = orderRepository.save(newOrder);
+        String orderMessage = getOrderMessage(savedOrder);
+        try {
+            wowKitchenBot.sendMessageToChat(orderMessage);
+        }catch (Exception e) {}
+        return savedOrder;
+    }
+
+    private String getOrderMessage(Order order) {
+        return  "Заказ #" + order.getId() + "\n" +
+                "Имя клиента : " + order.getUser().getName() + "\n" +
+                "Телефон клиента : " + order.getUser().getMobileNumber() + "\n" +
+                "Сумма заказа : " + order.getTotalCost() + " тнг" + "\n" +
+                "--Состав заказа : " + "\n" +
+                itemsToText(order.getItems()) + "\n" +
+                "Адрес : " + getAddress(order.getAddress());
+    }
+
+    private String itemsToText(List<OrderItem> items) {
+        StringBuilder stringBuilder = new StringBuilder();
+        items.forEach(orderItem -> {
+            stringBuilder.append("--Название : ").append(orderItem.getProduct().getName()).append(" Кол-во :").append(orderItem.getAmount()).append("\n");
+        });
+        return stringBuilder.toString();
+    }
+
+    private String getAddress(Address address) {
+        return address.getCity() + " " + address.getHome();
     }
 
     @Override

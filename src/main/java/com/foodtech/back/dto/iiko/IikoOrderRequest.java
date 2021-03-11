@@ -74,6 +74,9 @@ public class IikoOrderRequest {
     private static void formAddress(IikoAddressDto iikoAddress, Address userAddress) {
         iikoAddress.setCity(userAddress.getCity());
         iikoAddress.setStreet(userAddress.getStreet());
+        iikoAddress.setApartment(userAddress.getApartment());
+        iikoAddress.setFloor(userAddress.getFloor());
+        iikoAddress.setEntrance(userAddress.getEntrance());
         if (userAddress.getHome().length() > IIKO_HOME_MAX_LENGTH) {
             iikoAddress.setHome(TOO_LONG_HOME); // указываем оператору iiko, что номер дома нужно смотреть в комментарии к заказу
             iikoAddress.setComment(userAddress.getHome());

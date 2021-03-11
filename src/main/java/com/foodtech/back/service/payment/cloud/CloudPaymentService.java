@@ -21,6 +21,8 @@ import com.foodtech.back.service.notification.ampq.RabbitMqService;
 import com.foodtech.back.util.exceptions.CloudPaymentPayTransactionDeclinedException;
 import com.foodtech.back.util.exceptions.PaymentRequestInvalidException;
 import com.foodtech.back.util.exceptions.PaymentRequestSendingFailedException;
+import com.foodtech.back.util.mapper.CloudMapper;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -77,8 +79,8 @@ public class CloudPaymentService {
     public void authWithCardToken(User user, Long orderId) {
         Order order = orderRepository.findByIdAndUserIdAndStatusIn(orderId, user.getId(), NOT_PAID_STATUSES).orElseThrow();
         BankCard bankCard = bankCardService.getActualCard(user.getId()).orElseThrow();
-
-        CloudPaymentRequest request = requestBuilder.authRequest(user.getId(), bankCard.getToken(), order.getTotalCost(), order.getId());
+        CloudCheck cloudCheck = CloudMapper.toCloudCheck(order);
+        CloudPaymentRequest request = requestBuilder.authRequest(user.getId(), bankCard.getToken(), order.getTotalCost(), order.getId(), new Gson().toJson(cloudCheck));
         CloudPaymentBaseResponse response = requestSender.sendPaymentRequest(request);
 
         checkForRequestErrors(response);

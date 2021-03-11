@@ -26,7 +26,7 @@ public class CloudPaymentRequestBuilder {
                 .build();
     }
 
-    public CloudPaymentRequest authRequest(Long userId, String cardToken, Integer amount, Long orderId) {
+    public CloudPaymentRequest authRequest(Long userId, String cardToken, Integer amount, Long orderId, String jsonData) {
         return CloudPaymentRequest.builder()
                 .type(AUTH)
                 .amount(amount)
@@ -35,6 +35,7 @@ public class CloudPaymentRequestBuilder {
                 .accountId(userId.toString())
                 .currency(properties.getPaymentCurrency())
                 .description(properties.getPaymentDescription())
+                .jsonData(jsonData)
                 .build();
     }
 

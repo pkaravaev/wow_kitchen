@@ -172,13 +172,14 @@ public class BonusService {
         log.info("User '{}' spent registration bonuses. Returned bonuses to promo code owner: '{}'", user, codeOwner);
     }
 
+    //приходят ошибки отправления, заказ в итоге уходит НО бонусы возвращаются
     public void returnBonuses(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow();
-        BonusAccount bonusAccount = order.getUser().getBonusAccount();
-        Integer returnAmount = order.getAppliedBonusAmount();
-        bonusAccount.addBonuses(returnAmount);
-        int bonusesSpent = bonusAccount.getBonusesSpent() - returnAmount;
-        bonusAccount.setBonusesSpent(Math.max(bonusesSpent, 0));
+//        Order order = orderRepository.findById(orderId).orElseThrow();
+//        BonusAccount bonusAccount = order.getUser().getBonusAccount();
+//        Integer returnAmount = order.getAppliedBonusAmount();
+//        bonusAccount.addBonuses(returnAmount);
+//        int bonusesSpent = bonusAccount.getBonusesSpent() - returnAmount;
+//        bonusAccount.setBonusesSpent(Math.max(bonusesSpent, 0));
     }
 
     public int countCartCostWithBonuses(int costWithoutBonuses, int userBonusAmount) {

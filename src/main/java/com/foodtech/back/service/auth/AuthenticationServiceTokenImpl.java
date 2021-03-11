@@ -1,5 +1,6 @@
 package com.foodtech.back.service.auth;
 
+import com.foodtech.back.bot.WowKitchenBot;
 import com.foodtech.back.dto.auth.AuthDto;
 import com.foodtech.back.dto.auth.CredentialsAuthDto;
 import com.foodtech.back.dto.auth.CredentialsDto;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class AuthenticationServiceTokenImpl implements AuthenticationService {
 
+    private final WowKitchenBot wowKitchenBot;
+
     private final AuthCredentialsSender credentialsSender;
 
     private final AuthCredentialsChecker codeChecker;
@@ -29,11 +32,12 @@ public class AuthenticationServiceTokenImpl implements AuthenticationService {
     public AuthenticationServiceTokenImpl(AuthCredentialsSender credentialsSender,
                                           AuthCredentialsChecker codeChecker,
                                           UserService userService,
-                                          JwtTokenService tokenService) {
+                                          JwtTokenService tokenService, WowKitchenBot wowKitchenBot) {
         this.credentialsSender = credentialsSender;
         this.codeChecker = codeChecker;
         this.userService = userService;
         this.tokenService = tokenService;
+        this.wowKitchenBot = wowKitchenBot;
     }
 
     @Override
@@ -45,7 +49,16 @@ public class AuthenticationServiceTokenImpl implements AuthenticationService {
     public CredentialsDto authenticate(CredentialsAuthDto authDto) {
         codeChecker.checkCredentials(authDto);
         User user = userService.login(authDto);
+        try {
+            String userInfo = userInfo(user);
+            wowKitchenBot.sendMessageToChat(userInfo);
+        } catch (Exception e) {}
         return formTokens(user);
+    }
+
+    private String userInfo(User user) {
+        return "Новый пользователь : " + user.getName() + "\n" +
+                "Мобильный телефон : " + user.getFullMobileNumber();
     }
 
     private CredentialsDto formTokens(User user) {

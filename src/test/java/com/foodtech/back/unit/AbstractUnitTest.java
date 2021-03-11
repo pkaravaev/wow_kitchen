@@ -15,9 +15,7 @@ import org.springframework.test.context.TestPropertySource;
         "classpath:payment.properties",
         "classpath:client_messages.properties",
         "classpath:rabbitmq.properties",
-
         "classpath:payment-dev.properties"
 })
 public class AbstractUnitTest {
-
 }

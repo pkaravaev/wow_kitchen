@@ -1,21 +1,31 @@
 package com.foodtech.back.manual;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.foodtech.back.dto.iiko.IikoOrderRequest;
 import com.foodtech.back.entity.auth.Admin;
+import com.foodtech.back.entity.auth.FirebaseToken;
 import com.foodtech.back.entity.auth.Role;
 import com.foodtech.back.entity.model.*;
 import com.foodtech.back.entity.model.iiko.DeliveryCoordinate;
 import com.foodtech.back.entity.model.iiko.DeliveryZone;
 import com.foodtech.back.entity.model.iiko.Product;
 import com.foodtech.back.repository.auth.AdminRepository;
+import com.foodtech.back.repository.auth.FirebaseTokenRepository;
+import com.foodtech.back.repository.iiko.IikoDeliveryZoneRepository;
 import com.foodtech.back.repository.model.AddressDirectoryRepository;
-import com.foodtech.back.security.AdminDetailsService;
+import com.foodtech.back.repository.model.OrderRepository;
+import com.foodtech.back.repository.model.UserRepository;
 import com.foodtech.back.service.iiko.IikoOrderStatusCheckExecutor;
+import com.foodtech.back.service.iiko.IikoRequestService;
 import com.foodtech.back.service.model.AddressDirectoryService;
 import com.foodtech.back.service.model.DeliveryZoneService;
+import com.foodtech.back.service.notification.push.FirebasePushSender;
+import com.foodtech.back.service.payment.cloud.CloudCheck;
+import com.foodtech.back.service.payment.cloud.CloudPaymentService;
+import com.foodtech.back.util.mapper.CloudMapper;
+import com.google.gson.Gson;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -25,11 +35,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileWriter;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SpringJUnitWebConfig
 @SpringBootTest
@@ -45,11 +57,16 @@ import java.util.Set;
         "classpath:rabbitmq.properties",
         "classpath:payment-dev.properties"
 })
-@Disabled
 class ManualCodeExecution {
 
     @Autowired
     DeliveryZoneService deliveryZoneService;
+
+    @Autowired
+    IikoDeliveryZoneRepository deliveryZoneRepository;
+
+    @Autowired
+    private FirebasePushSender firebasePushSender;
 
     @Autowired
     AddressDirectoryRepository addressDirectoryRepository;
@@ -63,6 +80,18 @@ class ManualCodeExecution {
     @Autowired
     private AdminRepository adminRepository;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CloudPaymentService cloudPaymentService;
+
+    @Autowired
+    private FirebaseTokenRepository firebaseTokenRepository;
+
     @Test
     @Disabled
     void saveDeliveryZones() {
@@ -73,10 +102,10 @@ class ManualCodeExecution {
     public void addAdmin() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         Admin admin = new Admin();
-        admin.setName("Rizvan");
+        admin.setName("Erkin");
         admin.setCreated(LocalDateTime.now());
         admin.setRoles(Set.of(Role.ROLE_ADMIN));
-        admin.setPassword(encoder.encode("rizvan787"));
+        admin.setPassword(encoder.encode("iWxxjlYkYL"));
         adminRepository.save(admin);
     }
 
@@ -123,13 +152,68 @@ class ManualCodeExecution {
     }
 
     @Test
-    @Disabled
+    @Transactional
     void jsonTest() throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
-        IikoOrderRequest request = IikoOrderRequest.form(order());
-        String s = objectWriter.writeValueAsString(request);
-        System.out.println(s);
+        Optional<User> byCountryCodeAndMobileNumber = userRepository.findByCountryCodeAndMobileNumber("7", "328");
+        System.out.println();
+    }
+
+    @Test
+//    @Transactional
+    public void test(){
+
+        String text = "В  WOW KITCHEN обновилось меню, теперь в нем стало больше всего.\n" +
+                "\n" +
+                "Расширили зону доставки и теперь доставляем по всему левому берегу, даже в Акорду и Библиотеку";
+
+        List<FirebaseToken> all = firebaseTokenRepository.findAll();
+
+        all.forEach(firebaseToken -> {
+            firebasePushSender.sendPushByToken(firebaseToken.getToken(), text);
+        });
+    }
+
+    @Test
+    public void customerToTxt()throws Exception {
+
+        FileWriter myWriter = new FileWriter("customers_wow_02_2020.txt");
+        List<User> all = userRepository.findAll();
+        List<User> collect = all.stream()
+                .sorted((o1, o2) -> (int) (o1.getId() - o2.getId()))
+                .collect(Collectors.toList());
+
+        for (User user : collect) {
+            Address address = user.getAddresses().stream()
+                    .filter(addr -> addr.isActual())
+                    .findAny()
+                    .get();
+            myWriter.write(user.getName() + "  " + user.getMobileNumber() + " " + address.getStreet()+ " " + user.getCreated() + "\n");
+        }
+        myWriter.close();
+    }
+
+    public void tes() {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Customers");
+        Row header = sheet.createRow(0);
+
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+        font.setFontName("Arial");
+        font.setFontHeightInPoints((short) 16);
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        Cell headerCell = header.createCell(0);
+        headerCell.setCellValue("Name");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(1);
+        headerCell.setCellValue("Age");
+        headerCell.setCellStyle(headerStyle);
     }
 
     private static Order order() {

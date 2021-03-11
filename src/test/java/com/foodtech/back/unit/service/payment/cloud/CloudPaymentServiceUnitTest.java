@@ -74,7 +74,7 @@ class CloudPaymentServiceUnitTest extends AbstractUnitTest {
                 .thenReturn(Optional.of(order));
         when(bankCardService.getActualCard(user.getId())).thenReturn(Optional.of(card));
         CloudPaymentRequest request = request();
-        when(requestBuilder.authRequest(user.getId(), card.getToken(), order.getTotalCost(), order.getId()))
+        when(requestBuilder.authRequest(user.getId(), card.getToken(), order.getTotalCost(), order.getId(), ""))
                 .thenReturn(request);
         CloudPaymentBaseResponse response = approvedResponse();
         when(requestSender.sendPaymentRequest(request)).thenReturn(response);
@@ -107,7 +107,7 @@ class CloudPaymentServiceUnitTest extends AbstractUnitTest {
                 .thenReturn(Optional.of(order));
         when(bankCardService.getActualCard(user.getId())).thenReturn(Optional.of(card));
         CloudPaymentRequest request = request();
-        when(requestBuilder.authRequest(user.getId(), card.getToken(), order.getTotalCost(), order.getId()))
+        when(requestBuilder.authRequest(user.getId(), card.getToken(), order.getTotalCost(), order.getId(), ""))
                 .thenReturn(request);
         when(requestSender.sendPaymentRequest(request)).thenReturn(null);
         when(bonusService.writeOffBonuses(user.getId(), order.getAppliedBonusAmount())).thenReturn(true);
@@ -130,7 +130,7 @@ class CloudPaymentServiceUnitTest extends AbstractUnitTest {
                 .thenReturn(Optional.of(order));
         when(bankCardService.getActualCard(user.getId())).thenReturn(Optional.of(card));
         CloudPaymentRequest request = request();
-        when(requestBuilder.authRequest(user.getId(), card.getToken(), order.getTotalCost(), order.getId()))
+        when(requestBuilder.authRequest(user.getId(), card.getToken(), order.getTotalCost(), order.getId(), ""))
                 .thenReturn(request);
         when(requestSender.sendPaymentRequest(request)).thenReturn(invalidResponse());
         when(bonusService.writeOffBonuses(user.getId(), order.getAppliedBonusAmount())).thenReturn(true);
@@ -153,7 +153,7 @@ class CloudPaymentServiceUnitTest extends AbstractUnitTest {
                 .thenReturn(Optional.of(order));
         when(bankCardService.getActualCard(user.getId())).thenReturn(Optional.of(card));
         CloudPaymentRequest request = request();
-        when(requestBuilder.authRequest(user.getId(), card.getToken(), order.getTotalCost(), order.getId()))
+        when(requestBuilder.authRequest(user.getId(), card.getToken(), order.getTotalCost(), order.getId(), ""))
                 .thenReturn(request);
         CloudPaymentBaseResponse response = declineResponse();
         when(requestSender.sendPaymentRequest(request)).thenReturn(response);
@@ -182,7 +182,7 @@ class CloudPaymentServiceUnitTest extends AbstractUnitTest {
                 .thenReturn(Optional.of(order));
         when(bankCardService.getActualCard(user.getId())).thenReturn(Optional.of(card));
         CloudPaymentRequest request = request();
-        when(requestBuilder.authRequest(user.getId(), card.getToken(), order.getTotalCost(), order.getId()))
+        when(requestBuilder.authRequest(user.getId(), card.getToken(), order.getTotalCost(), order.getId(), ""))
                 .thenReturn(request);
         CloudPaymentBaseResponse response = approvedResponse();
         when(requestSender.sendPaymentRequest(request)).thenReturn(response);

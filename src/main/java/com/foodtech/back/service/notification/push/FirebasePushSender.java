@@ -78,7 +78,7 @@ public class FirebasePushSender {
         }
     }
 
-    private String sendPushByToken(String firebaseToken, String body) {
+    public String sendPushByToken(String firebaseToken, String body) {
         String result = null;
 
         try {
